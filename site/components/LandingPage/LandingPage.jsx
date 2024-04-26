@@ -2,6 +2,7 @@ import BackgroundImage from './assets/background.png'
 import SearchIcon from './assets/search_icon.jpg'
 
 import Navbar from './Navbar'
+import ServiceTypeList from './ServiceTypeList'
 // import LandingPageHeading from './LandingPageHeading'
 
 function LandingPage() {   
@@ -9,6 +10,7 @@ function LandingPage() {
         <div>
             <Navbar />
             <LandingElement />
+            <ServiceTypeList />
         </div>
     )
 }
