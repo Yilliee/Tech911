@@ -9,7 +9,7 @@ CREATE TABLE `User` (
 
 CREATE TABLE `Credential` (
   `user_id` int PRIMARY KEY,
-  `email` varchar(255) UNIQUE NOT NULL COMMENT 'Kind of same as varchar',
+  `email` varchar(255) UNIQUE NOT NULL,
   `pass_hash` varchar(255) NOT NULL,
   `pass_salt` varchar(255) NOT NULL
 );
@@ -49,17 +49,19 @@ CREATE TABLE `Customer` (
 CREATE TABLE `ServiceCenter` (
   `user_id` int PRIMARY KEY,
   `contact_email` varchar(255) DEFAULT null,
-  `is_verified` bool NOT NULL DEFAULT false,
-  `rating` float DEFAULT null COMMENT 'Values between 0 - 5 (inclusive)',
-  `is_premium` bool NOT NULL DEFAULT false
+  `verification_status` ENUM ('Processing', 'Processed', 'Failed'),
+  `rating` float DEFAULT null COMMENT 'Values between 0 - 5 (inclusive)'
 );
 
 CREATE TABLE `ServiceListing` (
   `id` int PRIMARY KEY,
   `service_type_id` int,
+  `service_title` varchar(255) NOT NULL,
   `service_description` text,
   `owned_by` int,
-  `price` int NOT NULL
+  `price` int NOT NULL,
+  `thumbnail_id` int,
+  `is_premium` bool NOT NULL DEFAULT false
 );
 
 CREATE TABLE `ServiceListingPictures` (
@@ -70,7 +72,7 @@ CREATE TABLE `ServiceListingPictures` (
 
 CREATE TABLE `ServiceType` (
   `id` int PRIMARY KEY,
-  `type` varchar(255)
+  `type` varchar(255) NOT NULL
 );
 
 CREATE TABLE `ServiceOfferedFor` (
@@ -81,7 +83,7 @@ CREATE TABLE `ServiceOfferedFor` (
 
 CREATE TABLE `DeviceType` (
   `id` int PRIMARY KEY,
-  `type` varchar(255)
+  `type` varchar(255) NOT NULL
 );
 
 CREATE TABLE `Order` (
@@ -109,7 +111,8 @@ CREATE TABLE `OrderReceipt` (
   `order_id` int PRIMARY KEY,
   `total_cost` int NOT NULL,
   `payment_method_id` int,
-  `is_paid` bool NOT NULL DEFAULT false
+  `payment_proof` blob NOT NULL COMMENT 'Picture of payment proof',
+  `status` ENUM ('Processing', 'Processed', 'Failed') NOT NULL
 );
 
 CREATE TABLE `PaymentMethod` (
@@ -119,10 +122,11 @@ CREATE TABLE `PaymentMethod` (
 
 CREATE TABLE `Review` (
   `id` int PRIMARY KEY,
-  `rating` float NOT NULL COMMENT 'Values between 0 - 5 (inclusive)',
+  `rating` int NOT NULL COMMENT 'Values between 0 - 5 (inclusive)',
   `order_id` int NOT NULL,
   `service_listing_id` int NOT NULL,
   `reservation_time` datetime NOT NULL,
+  `thumbnail_id` int,
   `description` text,
   `reply_id` int
 );
@@ -183,6 +187,8 @@ ALTER TABLE `ServiceListing` ADD FOREIGN KEY (`service_type_id`) REFERENCES `Ser
 
 ALTER TABLE `ServiceListing` ADD FOREIGN KEY (`owned_by`) REFERENCES `ServiceCenter` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
+ALTER TABLE `ServiceListing` ADD FOREIGN KEY (`thumbnail_id`) REFERENCES `ServiceListingPictures` (`picture_id`) ON DELETE SET NULL;
+
 ALTER TABLE `ServiceListingPictures` ADD FOREIGN KEY (`listing_id`) REFERENCES `ServiceListing` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `ServiceOfferedFor` ADD FOREIGN KEY (`service_type_id`) REFERENCES `ServiceType` (`id`);
@@ -202,6 +208,8 @@ ALTER TABLE `OrderReceipt` ADD FOREIGN KEY (`order_id`) REFERENCES `Order` (`id`
 ALTER TABLE `OrderReceipt` ADD FOREIGN KEY (`payment_method_id`) REFERENCES `PaymentMethod` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 ALTER TABLE `Review` ADD FOREIGN KEY (`order_id`, `service_listing_id`, `reservation_time`) REFERENCES `OrderDetails` (`order_id`, `service_listing_id`, `reservation_time`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `Review` ADD FOREIGN KEY (`thumbnail_id`) REFERENCES `ReviewPictures` (`picture_id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 ALTER TABLE `Review` ADD FOREIGN KEY (`reply_id`) REFERENCES `ReviewReply` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 

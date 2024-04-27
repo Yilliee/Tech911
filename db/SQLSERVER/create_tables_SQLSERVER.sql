@@ -56,18 +56,20 @@ GO
 CREATE TABLE [ServiceCenter] (
   [user_id] int PRIMARY KEY,
   [contact_email] nvarchar(255) DEFAULT (null),
-  [is_verified] bool NOT NULL DEFAULT (false),
-  [rating] float DEFAULT (null),
-  [is_premium] bool NOT NULL DEFAULT (false)
+  [verification_status] nvarchar(255) NOT NULL CHECK ([verification_status] IN ('Processing', 'Processed', 'Failed')),
+  [rating] float DEFAULT (null)
 )
 GO
 
 CREATE TABLE [ServiceListing] (
   [id] int PRIMARY KEY,
   [service_type_id] int,
+  [service_title] nvarchar(255) NOT NULL,
   [service_description] text,
   [owned_by] int,
-  [price] int NOT NULL
+  [price] int NOT NULL,
+  [thumbnail_id] int,
+  [is_premium] bool NOT NULL DEFAULT (false)
 )
 GO
 
@@ -80,7 +82,7 @@ GO
 
 CREATE TABLE [ServiceType] (
   [id] int PRIMARY KEY,
-  [type] nvarchar(255)
+  [type] nvarchar(255) NOT NULL
 )
 GO
 
@@ -93,7 +95,7 @@ GO
 
 CREATE TABLE [DeviceType] (
   [id] int PRIMARY KEY,
-  [type] nvarchar(255)
+  [type] nvarchar(255) NOT NULL
 )
 GO
 
@@ -125,7 +127,8 @@ CREATE TABLE [OrderReceipt] (
   [order_id] int PRIMARY KEY,
   [total_cost] int NOT NULL,
   [payment_method_id] int,
-  [is_paid] bool NOT NULL DEFAULT (false)
+  [payment_proof] blob NOT NULL,
+  [status] nvarchar(255) NOT NULL CHECK ([status] IN ('Processing', 'Processed', 'Failed')) NOT NULL
 )
 GO
 
@@ -137,10 +140,11 @@ GO
 
 CREATE TABLE [Review] (
   [id] int PRIMARY KEY,
-  [rating] float NOT NULL,
+  [rating] int NOT NULL,
   [order_id] int NOT NULL,
   [service_listing_id] int NOT NULL,
   [reservation_time] datetime NOT NULL,
+  [thumbnail_id] int,
   [description] text,
   [reply_id] int
 )
@@ -201,14 +205,6 @@ GO
 
 EXEC sp_addextendedproperty
 @name = N'Column_Description',
-@value = 'Kind of same as varchar',
-@level0type = N'Schema', @level0name = 'dbo',
-@level1type = N'Table',  @level1name = 'Credential',
-@level2type = N'Column', @level2name = 'email';
-GO
-
-EXEC sp_addextendedproperty
-@name = N'Column_Description',
 @value = 'Values between 0 - 1 (inclusive)',
 @level0type = N'Schema', @level0name = 'dbo',
 @level1type = N'Table',  @level1name = 'LoyaltyBonusType',
@@ -221,6 +217,14 @@ EXEC sp_addextendedproperty
 @level0type = N'Schema', @level0name = 'dbo',
 @level1type = N'Table',  @level1name = 'ServiceCenter',
 @level2type = N'Column', @level2name = 'rating';
+GO
+
+EXEC sp_addextendedproperty
+@name = N'Column_Description',
+@value = 'Picture of payment proof',
+@level0type = N'Schema', @level0name = 'dbo',
+@level1type = N'Table',  @level1name = 'OrderReceipt',
+@level2type = N'Column', @level2name = 'payment_proof';
 GO
 
 EXEC sp_addextendedproperty
@@ -258,6 +262,9 @@ GO
 ALTER TABLE [ServiceListing] ADD FOREIGN KEY ([owned_by]) REFERENCES [ServiceCenter] ([user_id]) ON DELETE CASCADE ON UPDATE CASCADE
 GO
 
+ALTER TABLE [ServiceListing] ADD FOREIGN KEY ([thumbnail_id]) REFERENCES [ServiceListingPictures] ([picture_id]) ON DELETE SET NULL
+GO
+
 ALTER TABLE [ServiceListingPictures] ADD FOREIGN KEY ([listing_id]) REFERENCES [ServiceListing] ([id]) ON DELETE CASCADE ON UPDATE CASCADE
 GO
 
@@ -286,6 +293,9 @@ ALTER TABLE [OrderReceipt] ADD FOREIGN KEY ([payment_method_id]) REFERENCES [Pay
 GO
 
 ALTER TABLE [Review] ADD FOREIGN KEY ([order_id], [service_listing_id], [reservation_time]) REFERENCES [OrderDetails] ([order_id], [service_listing_id], [reservation_time]) ON DELETE CASCADE ON UPDATE CASCADE
+GO
+
+ALTER TABLE [Review] ADD FOREIGN KEY ([thumbnail_id]) REFERENCES [ReviewPictures] ([picture_id]) ON DELETE SET NULL ON UPDATE CASCADE
 GO
 
 ALTER TABLE [Review] ADD FOREIGN KEY ([reply_id]) REFERENCES [ReviewReply] ([id]) ON DELETE SET NULL ON UPDATE CASCADE
