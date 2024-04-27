@@ -1,14 +1,16 @@
 import  { useState }  from 'react'
 import PropTypes from 'prop-types';
-import LandingPageHeading from './LandingPageHeading'
+
 import ArrowKey_LightTheme from './assets/arrow.png'
 import ServiceTypes from './Data/ServiceTypeList';
 
-function ServiceTypeList() {
+function ServiceTypeList({elements_to_display}) {
     const [startIdx, setStartIdx] = useState(0);
 
     const total_elements = ServiceTypes.length;
-    const elements_to_display = 5;
+    const elements = ServiceTypes.map(
+        (name, idx) => <ServiceTypeCard key={idx} index={idx + 1} type_name={name} />
+    );
 
     function scrollList(count) {
         let new_idx = startIdx + count;
@@ -18,22 +20,21 @@ function ServiceTypeList() {
         setStartIdx(new_idx % total_elements);
     }
 
-    const components = ServiceTypes.map(
-        (name, idx) => <ServiceTypeCard key={idx} index={idx + 1} type_name={name} />
-    );
     
     return (
-        <div className="flex flex-col items-center justify-evenly text-center w-screen bg-gray-300 h-96">
-            <LandingPageHeading text="Services we offer" />
             <div className="flex flex-row items-center justify-evenly text-center w-screen h-48">
                 <img src={ArrowKey_LightTheme} className="mt-4 w-10 rotate-180 rounded-full" onClick={() => scrollList(-1)} />
-                {components.slice(startIdx, Math.min(startIdx + elements_to_display, total_elements))}
-                {components.slice(0, Math.max(startIdx + elements_to_display - ServiceTypes.length, 0))}
+                {elements.slice(startIdx, Math.min(startIdx + elements_to_display, total_elements))}
+                {elements.slice(0, Math.max(startIdx + elements_to_display - ServiceTypes.length, 0))}
                 <img src={ArrowKey_LightTheme} className="mt-4 w-10 rounded-full" onClick={() => scrollList(1)} />
             </div>
-        </div>
     );
 }
+
+ServiceTypeList.propTypes = {
+    elements_to_display: PropTypes.number.isRequired,
+};
+
 function ServiceTypeCard({index, type_name}) {
     return (
         <div className="mx-4 flex flex-col items-center">

@@ -3,14 +3,16 @@ import SearchIcon from './assets/search_icon.jpg'
 
 import Navbar from './Navbar'
 import ServiceTypeList from './ServiceTypeList'
-// import LandingPageHeading from './LandingPageHeading'
+import FeaturedListingGrid from '../Listings/FeaturedListingGrid'
+import LandingPageHeading from './LandingPageHeading'
 
 function LandingPage() {   
     return (
         <div>
             <Navbar />
             <LandingElement />
-            <ServiceTypeList />
+            <ServiceTypes />
+            <FeaturedListings />
         </div>
     )
 }
@@ -34,6 +36,7 @@ function LandingElement() {
                 <input
                     className="mt-4 rounded-l-xl pl-2 py-1 h-12 w-96 border-black border-2 border-r-0"
                     placeholder="What service do you need?"
+                    type="search"
                 />
                 <img
                     className="mt-4 h-12 rounded-r-xl border-black border-2 border-l-0"
@@ -47,6 +50,23 @@ function LandingElement() {
     )
 }
 
+function ServiceTypes() {
+    return (
+        <div className="flex flex-col items-center justify-evenly text-center w-screen bg-gray-300 h-96">
+            <LandingPageHeading text="Services we offer" />
+            <ServiceTypeList elements_to_display={5} />
+        </div>
+    )
+}
+
+function FeaturedListings() {
+    return (
+        <div className="flex flex-col items-center text-center justify-evenly w-screen h-auto">
+            <LandingPageHeading text="Featured Listings" className="my-10"/>
+            <FeaturedListingGrid cols={5} />
+        </div>
+    )
+}
 
 
 export default LandingPage;
