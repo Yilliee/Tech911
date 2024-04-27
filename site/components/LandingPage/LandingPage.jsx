@@ -13,6 +13,7 @@ function LandingPage() {
             <LandingElement />
             <ServiceTypes />
             <FeaturedListings />
+            <Footer />
         </div>
     )
 }
@@ -68,5 +69,13 @@ function FeaturedListings() {
     )
 }
 
+function Footer() {
+    return (
+        <footer className="flex flex-row justify-between bg-black py-1 text-white text-center">
+            <p>&copy; 2024 All rights reserved</p>
+            <p> Tech-911</p>
+        </footer>
+    );
+}
 
 export default LandingPage;
