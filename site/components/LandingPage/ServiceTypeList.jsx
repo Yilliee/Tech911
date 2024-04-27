@@ -22,7 +22,7 @@ function ServiceTypeList({elements_to_display}) {
 
     
     return (
-            <div className="flex flex-row items-center justify-evenly text-center w-screen h-48">
+            <div className="flex flex-row items-center justify-evenly text-center w-full h-48">
                 <img src={ArrowKey_LightTheme} className="mt-4 w-10 rotate-180 rounded-full" onClick={() => scrollList(-1)} />
                 {elements.slice(startIdx, Math.min(startIdx + elements_to_display, total_elements))}
                 {elements.slice(0, Math.max(startIdx + elements_to_display - ServiceTypes.length, 0))}

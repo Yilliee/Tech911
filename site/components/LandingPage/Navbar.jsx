@@ -2,7 +2,7 @@ import Logo from '../../src/assets/react.svg'
 
 function LandingPageNavbar() {
     return (
-        <nav className="w-screen flex items-center justify-between bg-black text-white p-4 font-bold">
+        <nav className="w-full flex items-center justify-between bg-black text-white p-4 font-bold">
             <div className="flex items-center justify-between">
                 <div className="flex items-center" onClick={() => {console.log("Navigate to Landing Page")}}>
                     <img src={Logo} alt="Logo" className="h-8 w-8" />

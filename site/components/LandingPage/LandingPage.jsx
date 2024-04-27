@@ -8,6 +8,8 @@ import ServiceTypeList from './ServiceTypeList'
 import FeaturedListingGrid from '../Listings/FeaturedListingGrid'
 import TopReviewsGrid from '../Reviews/TopReviewsGrid'
 
+import Listings from '../Listings/Data/ListsData'
+
 function LandingPage() {   
     return (
         <div>
@@ -23,7 +25,7 @@ function LandingPage() {
 
 function LandingElement() {
     return (
-        <div className="w-screen h-screen text-white flex flex-col items-left justify-center px-8" style={{backgroundImage: `url(${BackgroundImage})`}}>
+        <div className="w-full h-screen text-white flex flex-col items-left justify-center px-8" style={{backgroundImage: `url(${BackgroundImage})`}}>
             <div className="text-5xl font-bold">
                 <h1>
                     Tech in trouble?
@@ -56,7 +58,7 @@ function LandingElement() {
 
 function ServiceTypes() {
     return (
-        <div className="flex flex-col items-center justify-evenly text-center w-screen bg-gray-300 h-96">
+        <div className="flex flex-col items-center justify-evenly text-center w-full bg-gray-300 h-96">
             <LandingPageHeading text="Services we offer" />
             <ServiceTypeList elements_to_display={5} />
         </div>
@@ -64,17 +66,19 @@ function ServiceTypes() {
 }
 
 function FeaturedListings() {
+    const gridCols = 5;
+    const featuredListings = Listings.filter((listing) => listing.isFeatured).slice(0, 2 * gridCols);
     return (
-        <div className="flex flex-col items-center text-center justify-evenly w-screen h-auto">
+        <div className="flex flex-col items-center text-center justify-evenly w-full h-auto">
             <LandingPageHeading text="Featured Listings" className="my-10"/>
-            <FeaturedListingGrid cols={5} />
+            <FeaturedListingGrid featuredListings={featuredListings} cols={Math.min(5, featuredListings.length)} />
         </div>
     )
 }
 
 function TopReviews() {
     return (
-        <div className="flex flex-col items-center text-center justify-evenly w-screen h-auto bg-blue-100">
+        <div className="flex flex-col items-center text-center justify-evenly w-full h-auto bg-blue-100">
             <LandingPageHeading text="What others say about us:" className="mt-8"/>
             <TopReviewsGrid cols={5}/>
         </div>
