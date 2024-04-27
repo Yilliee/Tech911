@@ -1,10 +1,12 @@
 import BackgroundImage from './assets/background.png'
 import SearchIcon from './assets/search_icon.jpg'
 
+import LandingPageHeading from './LandingPageHeading'
+
 import Navbar from './Navbar'
 import ServiceTypeList from './ServiceTypeList'
 import FeaturedListingGrid from '../Listings/FeaturedListingGrid'
-import LandingPageHeading from './LandingPageHeading'
+import TopReviewsGrid from '../Reviews/TopReviewsGrid'
 
 function LandingPage() {   
     return (
@@ -13,6 +15,7 @@ function LandingPage() {
             <LandingElement />
             <ServiceTypes />
             <FeaturedListings />
+            <TopReviews />
             <Footer />
         </div>
     )
@@ -69,6 +72,15 @@ function FeaturedListings() {
     )
 }
 
+function TopReviews() {
+    return (
+        <div className="flex flex-col items-center text-center justify-evenly w-screen h-auto bg-blue-100">
+            <LandingPageHeading text="What others say about us:" className="mt-8"/>
+            <TopReviewsGrid cols={5}/>
+        </div>
+    );
+}
+
 function Footer() {
     return (
         <footer className="flex flex-row justify-between bg-black py-1 text-white text-center">
@@ -77,5 +89,6 @@ function Footer() {
         </footer>
     );
 }
+
 
 export default LandingPage;
