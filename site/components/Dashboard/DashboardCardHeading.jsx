@@ -5,7 +5,7 @@ function DashboardCardHeading({TitleSize, Headings}) {
 
     const elements = Headings.map((content, idx) => {
         return (
-            <h3 key={idx} className={`${content === 'Title' ? TitleSize : 'w-1/6'} ${headerClass} ${idx + 1 < Headings.length && 'border-r-2'}`}>{content}</h3>
+            <h3 key={idx} className={`${idx == 1 ? TitleSize : 'w-1/6'} ${headerClass} ${idx + 1 < Headings.length && 'border-r-2'}`}>{content}</h3>
         );
     });
 
