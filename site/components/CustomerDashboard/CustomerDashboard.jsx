@@ -1,8 +1,8 @@
 import Navbar from './Navbar';
 import DashboardCard from '../Dashboard/DashboardCard';
-import BookingEntries from './Data/UpcomingBooking';
-import PendingReviewsEntries from './Data/ReviewsPending';
-import OrderHistoryEntries from './Data/OrderHistoryEntries';
+import BookingEntries from '../Dashboard/Data/UpcomingBooking';
+import PendingReviewsEntries from '../Dashboard/Data/ReviewsPending';
+import OrderHistoryEntries from '../Dashboard/Data/OrderHistoryEntries';
 
 function UserDashboard() {
     const username = "Yillié";
