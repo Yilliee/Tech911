@@ -4,7 +4,7 @@ import BookingEntries from '../Dashboard/Data/UpcomingBooking';
 import PendingReviewsEntries from '../Dashboard/Data/ReviewsPending';
 import OrderHistoryEntries from '../Dashboard/Data/OrderHistoryEntries';
 
-function UserDashboard() {
+function ServiceCenterDashboard() {
     const username = "Yillié";
     return (
         <div className="h-full w-full">
@@ -48,4 +48,4 @@ function OrderHistory() {
     )
 }
 
-export default UserDashboard;
+export default ServiceCenterDashboard;
