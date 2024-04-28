@@ -1,11 +1,16 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 
 function DashboardCardEntry({TitleSize, EntryContent}) {
-    const headerClass = "flex flex-col truncate justify-center px-4 h-full text-center font-bold text-normal border-black";
+    const basicClass = "flex flex-col truncate justify-center px-4 h-full text-center items-center font-bold text-normal border-black";
 
     const elements = EntryContent.map((content, idx) => {
+        const classProp = `${typeof content === 'object' && content.props.className} ${idx === 1 ? TitleSize : 'w-1/6'} ${basicClass} ${(idx + 1 < EntryContent.length) && 'border-r-2'}`;
+
         return (
-            <h3 key={idx} className={`${idx === 1 ? TitleSize : 'w-1/6'} ${headerClass} ${(idx + 1 < EntryContent.length) && 'border-r-2'}`}>{content}</h3>
+            (typeof content === 'object') ?
+            React.cloneElement(content, { className : classProp })
+            : <h3 key={idx} className={classProp}>{content}</h3>
         );
     });
 
