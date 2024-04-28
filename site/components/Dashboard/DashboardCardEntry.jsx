@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 
 function DashboardCardEntry({TitleSize, EntryContent}) {
-    const headerClass = "flex flex-col truncate justify-center px-4 h-full text-center font-bold text-normal border-white";
+    const headerClass = "flex flex-col truncate justify-center px-4 h-full text-center font-bold text-normal border-black";
 
     console.log(TitleSize);
 
@@ -12,7 +12,7 @@ function DashboardCardEntry({TitleSize, EntryContent}) {
     });
 
     return (
-        <div className="flex flex-row justify-center h-12 items-center border-b-2">
+        <div className="flex flex-row justify-center h-12 items-center border-b-2 border-black">
            {elements}
         </div>
     )

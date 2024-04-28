@@ -15,14 +15,14 @@ function DashboardCard({TitleSize, TableHeading, TableEntries, MaxEntriesPerPage
         return (
             <button 
                 key={idx} onClick={() => handlePageChange(idx)}
-                className={`m-2 p-2 w-12 font-semibold rounded-2xl ${idx === currentPage ? 'bg-yellow-300 text-black' : 'bg-white text-black' }`}
+                className={`m-2 p-2 w-12 font-semibold rounded-2xl ${idx === currentPage ? 'bg-black text-white' : 'bg-white text-black' }`}
             >
                 {idx + 1}
             </button>
         );
     });
     return (
-        <div className="flex-inline flex-col justify-start mt-4 bg-black text-white rounded-3xl w-full">
+        <div className="flex-inline flex-col justify-start mt-4 bg-sky-100 text-black border-black border-2 rounded-3xl w-full">
             <DashboardCardHeading TitleSize={TitleSize} Headings={TableHeading} />
             {TableEntries.slice(currentPage*MaxEntriesPerPage, (currentPage + 1)*MaxEntriesPerPage).map(
                     (entry, idx) => {
