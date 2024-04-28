@@ -15,7 +15,6 @@ function RegisterCard() {
     function formSubmitHandler(e) {
         e.preventDefault();
 
-        console.log(accountType + ' details submitted');
         // Store user details according to accountType
         // Redirect to main page
     }

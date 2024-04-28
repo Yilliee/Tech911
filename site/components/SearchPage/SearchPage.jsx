@@ -26,8 +26,6 @@ const SearchPage = () => {
 
     function applyFilters(price, serviceFilters, deviceFilters) {
         const filteredListings = ListingElements.filter((listing) => {
-            if ( ! (Math.ceil(listing.price) <= price) && serviceFilters[listing.serviceType] && deviceFilters[listing.DeviceType] )
-                console.log(listing.price, price, serviceFilters[listing.serviceType], deviceFilters[listing.DeviceType]);
             return (listing.price <= price) && serviceFilters[listing.serviceType] && deviceFilters[listing.DeviceType];
         });
 

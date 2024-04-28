@@ -13,7 +13,6 @@ function LoginForm() {
 
     function verifyEmail() {
         const email = document.getElementById('email');
-        console.log(email.value);
 
         /* Email.verified from db */
         // eslint-disable-next-line no-constant-condition
@@ -30,8 +29,7 @@ function LoginForm() {
             alert('Please enter a valid email');
     }
     function verifyPass() {
-        const pass = document.getElementById('password');
-        console.log(pass.value);
+        // const pass = document.getElementById('password');
     }
 
     return (
