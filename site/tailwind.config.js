@@ -17,6 +17,7 @@ module.exports = {
       },
       aspectRatio: {
         '5/13': '5 / 13',
+        '16/10': '16 / 10',
       },
       borderRadius: {
         'large': '50px'
