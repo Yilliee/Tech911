@@ -41,7 +41,7 @@ CREATE TABLE `LoyaltyBonusType` (
 
 CREATE TABLE `Customer` (
   `user_id` int PRIMARY KEY,
-  `service_package_id` int NOT NULL DEFAULT 0,
+  `service_package_id` int NOT NULL DEFAULT 1,
   `loyalty_points` int DEFAULT 0,
   `loyalty_type_id` int DEFAULT null
 );
@@ -54,7 +54,7 @@ CREATE TABLE `ServiceCenter` (
 );
 
 CREATE TABLE `ServiceListing` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `service_type_id` int,
   `device_type_id` int,
   `service_title` varchar(255) NOT NULL,
@@ -66,23 +66,23 @@ CREATE TABLE `ServiceListing` (
 );
 
 CREATE TABLE `ServiceListingPictures` (
-  `picture_id` int PRIMARY KEY,
+  `picture_id` int PRIMARY KEY AUTO_INCREMENT,
   `listing_id` int NOT NULL,
   `picture` mediumblob NOT NULL
 );
 
 CREATE TABLE `ServiceType` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `type` varchar(255) NOT NULL
 );
 
 CREATE TABLE `DeviceType` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `type` varchar(255) NOT NULL
 );
 
 CREATE TABLE `Order` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `order_timestamp` datetime NOT NULL
 );
@@ -97,7 +97,7 @@ CREATE TABLE `OrderDetails` (
 );
 
 CREATE TABLE `OrderStatus` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `details` varchar(255)
 );
@@ -111,29 +111,28 @@ CREATE TABLE `OrderReceipt` (
 );
 
 CREATE TABLE `PaymentMethod` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `type` varchar(255)
 );
 
 CREATE TABLE `Review` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `rating` int NOT NULL COMMENT 'Values between 0 - 5 (inclusive)',
   `order_id` int NOT NULL,
   `service_listing_id` int NOT NULL,
   `reservation_time` datetime NOT NULL,
   `thumbnail_id` int,
   `description` text,
-  `reply_id` int
 );
 
 CREATE TABLE `ReviewPictures` (
-  `picture_id` int PRIMARY KEY,
+  `picture_id` int PRIMARY KEY AUTO_INCREMENT,
   `review_id` int NOT NULL,
   `picture` mediumblob NOT NULL
 );
 
 CREATE TABLE `ReviewReply` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `review_id` int UNIQUE NOT NULL,
   `description` text
 );
