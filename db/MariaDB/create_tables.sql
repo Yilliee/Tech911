@@ -56,6 +56,7 @@ CREATE TABLE `ServiceCenter` (
 CREATE TABLE `ServiceListing` (
   `id` int PRIMARY KEY,
   `service_type_id` int,
+  `device_type_id` int,
   `service_title` varchar(255) NOT NULL,
   `service_description` text,
   `owned_by` int,
@@ -73,12 +74,6 @@ CREATE TABLE `ServiceListingPictures` (
 CREATE TABLE `ServiceType` (
   `id` int PRIMARY KEY,
   `type` varchar(255) NOT NULL
-);
-
-CREATE TABLE `ServiceOfferedFor` (
-  `service_type_id` int NOT NULL,
-  `device_type_id` int NOT NULL,
-  PRIMARY KEY (`service_type_id`, `device_type_id`)
 );
 
 CREATE TABLE `DeviceType` (
@@ -183,17 +178,15 @@ ALTER TABLE `Customer` ADD FOREIGN KEY (`loyalty_type_id`) REFERENCES `LoyaltyBo
 
 ALTER TABLE `ServiceCenter` ADD FOREIGN KEY (`user_id`) REFERENCES `User` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `ServiceListing` ADD FOREIGN KEY (`service_type_id`) REFERENCES `ServiceType` (`id`) ON DELETE SET DEFAULT ON UPDATE CASCADE;
+ALTER TABLE `ServiceListing` ADD FOREIGN KEY (`service_type_id`) REFERENCES `ServiceType` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+ALTER TABLE `ServiceListing` ADD FOREIGN KEY (`device_type_id`) REFERENCES `DeviceType` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 ALTER TABLE `ServiceListing` ADD FOREIGN KEY (`owned_by`) REFERENCES `ServiceCenter` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `ServiceListing` ADD FOREIGN KEY (`thumbnail_id`) REFERENCES `ServiceListingPictures` (`picture_id`) ON DELETE SET NULL;
 
 ALTER TABLE `ServiceListingPictures` ADD FOREIGN KEY (`listing_id`) REFERENCES `ServiceListing` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `ServiceOfferedFor` ADD FOREIGN KEY (`service_type_id`) REFERENCES `ServiceType` (`id`);
-
-ALTER TABLE `ServiceOfferedFor` ADD FOREIGN KEY (`device_type_id`) REFERENCES `DeviceType` (`id`);
 
 ALTER TABLE `Order` ADD FOREIGN KEY (`user_id`) REFERENCES `Customer` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
