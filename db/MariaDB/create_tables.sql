@@ -3,7 +3,7 @@ CREATE TABLE `User` (
   `user_name` varchar(255) UNIQUE NOT NULL,
   `display_name` varchar(255) NOT NULL,
   `profile_pic` mediumblob,
-  `address` int DEFAULT null,
+  `address` varchar(255) DEFAULT null,
   `phone_no` char(11) NOT NULL,
   `bio` text DEFAULT null
 );
@@ -107,7 +107,7 @@ CREATE TABLE `OrderReceipt` (
   `total_cost` int NOT NULL,
   `payment_method_id` int,
   `payment_proof` mediumblob NOT NULL COMMENT 'Picture of payment proof',
-  `status` ENUM ('Processing', 'Processed', 'Failed') NOT NULL
+  `payment_status` ENUM ('Processing', 'Processed', 'Failed') NOT NULL
 );
 
 CREATE TABLE `PaymentMethod` (
