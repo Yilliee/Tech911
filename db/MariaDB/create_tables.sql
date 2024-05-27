@@ -68,7 +68,7 @@ CREATE TABLE `ServiceListing` (
 CREATE TABLE `ServiceListingPictures` (
   `picture_id` int PRIMARY KEY,
   `listing_id` int NOT NULL,
-  `picture` blob NOT NULL
+  `picture` mediumblob NOT NULL
 );
 
 CREATE TABLE `ServiceType` (
@@ -106,7 +106,7 @@ CREATE TABLE `OrderReceipt` (
   `order_id` int PRIMARY KEY,
   `total_cost` int NOT NULL,
   `payment_method_id` int,
-  `payment_proof` blob NOT NULL COMMENT 'Picture of payment proof',
+  `payment_proof` mediumblob NOT NULL COMMENT 'Picture of payment proof',
   `status` ENUM ('Processing', 'Processed', 'Failed') NOT NULL
 );
 
@@ -129,7 +129,7 @@ CREATE TABLE `Review` (
 CREATE TABLE `ReviewPictures` (
   `picture_id` int PRIMARY KEY,
   `review_id` int NOT NULL,
-  `picture` blob NOT NULL
+  `picture` mediumblob NOT NULL
 );
 
 CREATE TABLE `ReviewReply` (
