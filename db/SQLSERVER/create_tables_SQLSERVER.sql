@@ -2,7 +2,8 @@ CREATE TABLE [User] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
   [user_name] nvarchar(255) UNIQUE NOT NULL,
   [display_name] nvarchar(255) NOT NULL,
-  [address] int DEFAULT (null),
+  [profile_pic] mediumblob,
+  [address] nvarchar(255) DEFAULT (null),
   [phone_no] char(11) NOT NULL,
   [bio] text DEFAULT (null)
 )
@@ -11,14 +12,13 @@ GO
 CREATE TABLE [Credential] (
   [user_id] int PRIMARY KEY,
   [email] nvarchar(255) UNIQUE NOT NULL,
-  [pass_hash] nvarchar(255) NOT NULL,
-  [pass_salt] nvarchar(255) NOT NULL
+  [pass_hash] nvarchar(255) NOT NULL
 )
 GO
 
 CREATE TABLE [Admin] (
   [user_id] int PRIMARY KEY,
-  [role_id] int NOT NULL
+  [role_id] int NOT NULL DEFAULT (1)
 )
 GO
 
@@ -32,22 +32,22 @@ GO
 CREATE TABLE [ServicePackage] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
   [package_name] nvarchar(255) NOT NULL,
-  [description] nvarchar(255)
+  [description] nvarchar(255),
+  [chat_support] bool NOT NULL DEFAULT (false),
+  [call_support] bool NOT NULL DEFAULT (false)
 )
 GO
 
 CREATE TABLE [LoyaltyBonusType] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
   [points_threshold] int NOT NULL,
-  [discount] float NOT NULL DEFAULT (0),
-  [chat_support] bool NOT NULL DEFAULT (false),
-  [call_support] bool NOT NULL DEFAULT (false)
+  [discount] float NOT NULL DEFAULT (0)
 )
 GO
 
 CREATE TABLE [Customer] (
   [user_id] int PRIMARY KEY,
-  [service_package_id] int NOT NULL DEFAULT (0),
+  [service_package_id] int NOT NULL DEFAULT (1),
   [loyalty_points] int DEFAULT (0),
   [loyalty_type_id] int DEFAULT (null)
 )
@@ -62,8 +62,9 @@ CREATE TABLE [ServiceCenter] (
 GO
 
 CREATE TABLE [ServiceListing] (
-  [id] int PRIMARY KEY,
+  [id] int PRIMARY KEY IDENTITY(1, 1),
   [service_type_id] int,
+  [device_type_id] int,
   [service_title] nvarchar(255) NOT NULL,
   [service_description] text,
   [owned_by] int,
@@ -74,33 +75,26 @@ CREATE TABLE [ServiceListing] (
 GO
 
 CREATE TABLE [ServiceListingPictures] (
-  [picture_id] int PRIMARY KEY,
+  [picture_id] int PRIMARY KEY IDENTITY(1, 1),
   [listing_id] int NOT NULL,
-  [picture] blob NOT NULL
+  [picture] mediumblob NOT NULL
 )
 GO
 
 CREATE TABLE [ServiceType] (
-  [id] int PRIMARY KEY,
+  [id] int PRIMARY KEY IDENTITY(1, 1),
   [type] nvarchar(255) NOT NULL
 )
 GO
 
-CREATE TABLE [ServiceOfferedFor] (
-  [service_type_id] int NOT NULL,
-  [device_type_id] int NOT NULL,
-  PRIMARY KEY ([service_type_id], [device_type_id])
-)
-GO
-
 CREATE TABLE [DeviceType] (
-  [id] int PRIMARY KEY,
+  [id] int PRIMARY KEY IDENTITY(1, 1),
   [type] nvarchar(255) NOT NULL
 )
 GO
 
 CREATE TABLE [Order] (
-  [id] int PRIMARY KEY,
+  [id] int PRIMARY KEY IDENTITY(1, 1),
   [user_id] int NOT NULL,
   [order_timestamp] datetime NOT NULL
 )
@@ -117,7 +111,7 @@ CREATE TABLE [OrderDetails] (
 GO
 
 CREATE TABLE [OrderStatus] (
-  [id] int PRIMARY KEY,
+  [id] int PRIMARY KEY IDENTITY(1, 1),
   [name] nvarchar(255) NOT NULL,
   [details] nvarchar(255)
 )
@@ -127,38 +121,37 @@ CREATE TABLE [OrderReceipt] (
   [order_id] int PRIMARY KEY,
   [total_cost] int NOT NULL,
   [payment_method_id] int,
-  [payment_proof] blob NOT NULL,
-  [status] nvarchar(255) NOT NULL CHECK ([status] IN ('Processing', 'Processed', 'Failed')) NOT NULL
+  [payment_proof] mediumblob NOT NULL,
+  [payment_status] nvarchar(255) NOT NULL CHECK ([payment_status] IN ('Processing', 'Processed', 'Failed')) NOT NULL
 )
 GO
 
 CREATE TABLE [PaymentMethod] (
-  [id] int PRIMARY KEY,
+  [id] int PRIMARY KEY IDENTITY(1, 1),
   [type] nvarchar(255)
 )
 GO
 
 CREATE TABLE [Review] (
-  [id] int PRIMARY KEY,
+  [id] int PRIMARY KEY IDENTITY(1, 1),
   [rating] int NOT NULL,
   [order_id] int NOT NULL,
   [service_listing_id] int NOT NULL,
   [reservation_time] datetime NOT NULL,
   [thumbnail_id] int,
-  [description] text,
-  [reply_id] int
+  [description] text
 )
 GO
 
 CREATE TABLE [ReviewPictures] (
-  [picture_id] int PRIMARY KEY,
+  [picture_id] int PRIMARY KEY IDENTITY(1, 1),
   [review_id] int NOT NULL,
-  [picture] blob NOT NULL
+  [picture] mediumblob NOT NULL
 )
 GO
 
 CREATE TABLE [ReviewReply] (
-  [id] int PRIMARY KEY,
+  [id] int PRIMARY KEY IDENTITY(1, 1),
   [review_id] int UNIQUE NOT NULL,
   [description] text
 )
@@ -256,7 +249,10 @@ GO
 ALTER TABLE [ServiceCenter] ADD FOREIGN KEY ([user_id]) REFERENCES [User] ([id]) ON DELETE CASCADE ON UPDATE CASCADE
 GO
 
-ALTER TABLE [ServiceListing] ADD FOREIGN KEY ([service_type_id]) REFERENCES [ServiceType] ([id]) ON DELETE SET DEFAULT ON UPDATE CASCADE
+ALTER TABLE [ServiceListing] ADD FOREIGN KEY ([service_type_id]) REFERENCES [ServiceType] ([id]) ON DELETE SET NULL ON UPDATE CASCADE
+GO
+
+ALTER TABLE [ServiceListing] ADD FOREIGN KEY ([device_type_id]) REFERENCES [DeviceType] ([id]) ON DELETE SET NULL ON UPDATE CASCADE
 GO
 
 ALTER TABLE [ServiceListing] ADD FOREIGN KEY ([owned_by]) REFERENCES [ServiceCenter] ([user_id]) ON DELETE CASCADE ON UPDATE CASCADE
@@ -266,12 +262,6 @@ ALTER TABLE [ServiceListing] ADD FOREIGN KEY ([thumbnail_id]) REFERENCES [Servic
 GO
 
 ALTER TABLE [ServiceListingPictures] ADD FOREIGN KEY ([listing_id]) REFERENCES [ServiceListing] ([id]) ON DELETE CASCADE ON UPDATE CASCADE
-GO
-
-ALTER TABLE [ServiceOfferedFor] ADD FOREIGN KEY ([service_type_id]) REFERENCES [ServiceType] ([id])
-GO
-
-ALTER TABLE [ServiceOfferedFor] ADD FOREIGN KEY ([device_type_id]) REFERENCES [DeviceType] ([id])
 GO
 
 ALTER TABLE [Order] ADD FOREIGN KEY ([user_id]) REFERENCES [Customer] ([user_id]) ON DELETE CASCADE ON UPDATE CASCADE
@@ -296,9 +286,6 @@ ALTER TABLE [Review] ADD FOREIGN KEY ([order_id], [service_listing_id], [reserva
 GO
 
 ALTER TABLE [Review] ADD FOREIGN KEY ([thumbnail_id]) REFERENCES [ReviewPictures] ([picture_id]) ON DELETE SET NULL ON UPDATE CASCADE
-GO
-
-ALTER TABLE [Review] ADD FOREIGN KEY ([reply_id]) REFERENCES [ReviewReply] ([id]) ON DELETE SET NULL ON UPDATE CASCADE
 GO
 
 ALTER TABLE [ReviewPictures] ADD FOREIGN KEY ([review_id]) REFERENCES [Review] ([id]) ON DELETE CASCADE ON UPDATE CASCADE

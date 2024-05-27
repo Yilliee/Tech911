@@ -122,7 +122,7 @@ CREATE TABLE `Review` (
   `service_listing_id` int NOT NULL,
   `reservation_time` datetime NOT NULL,
   `thumbnail_id` int,
-  `description` text,
+  `description` text
 );
 
 CREATE TABLE `ReviewPictures` (
@@ -202,8 +202,6 @@ ALTER TABLE `OrderReceipt` ADD FOREIGN KEY (`payment_method_id`) REFERENCES `Pay
 ALTER TABLE `Review` ADD FOREIGN KEY (`order_id`, `service_listing_id`, `reservation_time`) REFERENCES `OrderDetails` (`order_id`, `service_listing_id`, `reservation_time`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `Review` ADD FOREIGN KEY (`thumbnail_id`) REFERENCES `ReviewPictures` (`picture_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
-ALTER TABLE `Review` ADD FOREIGN KEY (`reply_id`) REFERENCES `ReviewReply` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 ALTER TABLE `ReviewPictures` ADD FOREIGN KEY (`review_id`) REFERENCES `Review` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
