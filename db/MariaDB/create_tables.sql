@@ -1,3 +1,9 @@
+CREATE TABLE `Session` (
+  `session_id` varchar(255) PRIMARY KEY NOT NULL,
+  `expires` int NOT NULL,
+  `data` text
+);
+
 CREATE TABLE `User` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `user_name` varchar(255) UNIQUE NOT NULL,

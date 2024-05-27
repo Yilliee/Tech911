@@ -1,3 +1,10 @@
+CREATE TABLE [Session] (
+  [session_id] nvarchar(255) PRIMARY KEY NOT NULL,
+  [expires] int NOT NULL,
+  [data] text
+)
+GO
+
 CREATE TABLE [User] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
   [user_name] nvarchar(255) UNIQUE NOT NULL,
