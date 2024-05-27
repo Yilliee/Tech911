@@ -1,40 +1,17 @@
-import { useState } from 'react';
+import PropTypes from 'prop-types';
 
-function LoginForm() {
-    const [email, setEmail] = useState(null);
-
+function LoginForm({email, verifyEmail, verifyPass}) {
     function loginButtonClicked(e) {
         e.preventDefault();
         if ( email == null )
-            verifyEmail();
+            verifyEmail(e);
         else
-            verifyPass();   
-    }
-
-    function verifyEmail() {
-        const email = document.getElementById('email');
-
-        /* Email.verified from db */
-        // eslint-disable-next-line no-constant-condition
-        if ( true ) {
-            setEmail(email.value);
-            
-            email.readOnly = true;
-            email.classList.add('bg-gray-400');
-
-            document.getElementById('customer_account_type-btn').disabled = true;
-            document.getElementById('service_center_account_type-btn').disabled = true;
-        }
-        else
-            alert('Please enter a valid email');
-    }
-    function verifyPass() {
-        // const pass = document.getElementById('password');
+            verifyPass(e);   
     }
 
     return (
         <form className="flex flex-col justify-between items-center">
-            <div className="p-4">
+            <div className="p-4" id="email_div">
                 <p className='px-4 py-2 font-semibold text-xl'>Email</p>
                 <input className="border-2 w-72 rounded-3xl h-12 px-4 text-base" type="email" id="email" autoComplete="email" placeholder="Enter email" />
             </div>
@@ -44,9 +21,14 @@ function LoginForm() {
                     <input className="border-2 w-72 rounded-3xl h-12 px-4 text-base" type="password" id="password" autoComplete='current-password' placeholder="Enter password" />
                 </div>
             }
-            <button className="bg-blue-500 w-24 h-10 rounded-3xl font-xl font-bold text-white my-10" onClick={loginButtonClicked}>{email ? 'Submit' : 'Next'}</button>
+            <button className="bg-blue-500 w-24 h-10 rounded-3xl font-xl font-bold text-white mb-10" onClick={loginButtonClicked}>{email ? 'Submit' : 'Next'}</button>
         </form>
     )
+}
+LoginForm.propTypes = {
+    email: PropTypes.string,
+    verifyEmail: PropTypes.func.isRequired,
+    verifyPass: PropTypes.func.isRequired,
 }
 
 export default LoginForm;
