@@ -2,6 +2,7 @@ CREATE TABLE `User` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `user_name` varchar(255) UNIQUE NOT NULL,
   `display_name` varchar(255) NOT NULL,
+  `profile_pic` mediumblob,
   `address` int DEFAULT null,
   `phone_no` char(11) NOT NULL,
   `bio` text DEFAULT null
@@ -10,8 +11,7 @@ CREATE TABLE `User` (
 CREATE TABLE `Credential` (
   `user_id` int PRIMARY KEY,
   `email` varchar(255) UNIQUE NOT NULL,
-  `pass_hash` varchar(255) NOT NULL,
-  `pass_salt` varchar(255) NOT NULL
+  `pass_hash` varchar(255) NOT NULL
 );
 
 CREATE TABLE `Admin` (
