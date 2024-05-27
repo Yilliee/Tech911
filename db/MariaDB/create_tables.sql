@@ -16,7 +16,7 @@ CREATE TABLE `Credential` (
 
 CREATE TABLE `Admin` (
   `user_id` int PRIMARY KEY,
-  `role_id` int NOT NULL
+  `role_id` int NOT NULL DEFAULT 1
 );
 
 CREATE TABLE `AdminRole` (
