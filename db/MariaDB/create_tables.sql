@@ -28,15 +28,15 @@ CREATE TABLE `AdminRole` (
 CREATE TABLE `ServicePackage` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `package_name` varchar(255) NOT NULL,
-  `description` varchar(255)
+  `description` varchar(255),
+  `chat_support` bool NOT NULL DEFAULT false,
+  `call_support` bool NOT NULL DEFAULT false
 );
 
 CREATE TABLE `LoyaltyBonusType` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `points_threshold` int NOT NULL,
-  `discount` float NOT NULL DEFAULT 0 COMMENT 'Values between 0 - 1 (inclusive)',
-  `chat_support` bool NOT NULL DEFAULT false,
-  `call_support` bool NOT NULL DEFAULT false
+  `discount` float NOT NULL DEFAULT 0 COMMENT 'Values between 0 - 1 (inclusive)'
 );
 
 CREATE TABLE `Customer` (
