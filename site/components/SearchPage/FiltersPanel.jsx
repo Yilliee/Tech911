@@ -5,7 +5,7 @@ import PriceFilter from './Filters/PriceFilter';
 import ServiceFilter from './Filters/ServiceFilter';
 import DeviceFliter from './Filters/DeviceFilter';
 
-function FiltersPanel({deviceTypes, serviceTypes, MaxPrice, onApply}) {
+function FiltersPanel({deviceTypes, serviceTypes, MinPrice, MaxPrice, onApply}) {
     const [currPrice, setCurrPrice] = useState(MaxPrice);
     const [serviceFilters, setServiceFilters] = useState(new Map(serviceTypes.map(type => [type, true])));
     const [deviceFilters, setDeviceFilters] = useState(new Map(deviceTypes.map(type => [type, true])));
@@ -29,6 +29,7 @@ function FiltersPanel({deviceTypes, serviceTypes, MaxPrice, onApply}) {
                 <PriceFilter
                     currPrice={currPrice}
                     setCurrPrice={setCurrPrice}
+                    minPrice={MinPrice}
                     maxPrice={MaxPrice} />
                 <ServiceFilter 
                     serviceFilters={serviceFilters}
@@ -47,10 +48,15 @@ function FiltersPanel({deviceTypes, serviceTypes, MaxPrice, onApply}) {
     );
 }
 FiltersPanel.propTypes = {
+    MinPrice: PropTypes.number,
     MaxPrice: PropTypes.number.isRequired,
     deviceTypes: PropTypes.arrayOf(PropTypes.string).isRequired,
     serviceTypes: PropTypes.arrayOf(PropTypes.string).isRequired,
     onApply: PropTypes.func.isRequired,
 };
+
+FiltersPanel.defaultValues = {
+    MinPrice: 0
+}
 
 export default FiltersPanel;
