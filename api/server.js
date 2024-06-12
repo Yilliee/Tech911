@@ -257,6 +257,21 @@ app.post('/getListingDetails',
     }
 );
 
+app.post('/makePurchase', authenticateUser,
+    async (req, res) => {
+        const { listing_id, reservation_time, quantity, total_cost, payment_proof_base64 } = req.body;
+        const userID = req.session.userID;
+
+        const status = await serverUtils.makePurchase(config, userID, listing_id, reservation_time, quantity, total_cost, payment_proof_base64);
+
+        if (status) {
+            res.json({ message: 'Purchase successful' });
+        } else {
+            res.status(500).json({ message: 'Purchase unsuccessful' });
+        }
+    }
+);
+
 app.listen(api_port,
     () => console.log('Server is running on port 3000')
 );

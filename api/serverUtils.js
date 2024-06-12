@@ -385,6 +385,25 @@ async function getListingsDetails(config, listingID) {
     }
 }
 
+async function makePurchase(config, userID, listing_id, reservation_time, quantity, total_cost, payment_proof_base64) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+
+        await conn.query(
+            `CALL MakePurchase(?, ?, ?, ?, ?, ?)`,
+            [userID, listing_id, reservation_time, quantity, total_cost, Buffer.from(payment_proof_base64, 'base64')]
+        );
+
+        return true;
+    } catch (err) {
+        console.error('Error making purchase: ', err);
+        return false;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
 module.exports = {
     addUser,
     verifyEmail,
@@ -401,4 +420,5 @@ module.exports = {
     getVerificationStatus,
     updateVerificationRequestStatus,
     getListingsDetails,
+    makePurchase,
 };
