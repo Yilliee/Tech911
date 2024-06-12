@@ -1,5 +1,6 @@
 import BackgroundImage from './assets/background.png'
 import SearchIcon from './assets/search_icon.jpg'
+import { useNavigate } from 'react-router-dom'
 
 import { useEffect, useState } from 'react'
 import LandingPageHeading from './LandingPageHeading'
@@ -23,6 +24,14 @@ function LandingPage() {
 }
 
 function LandingElement() {
+    const navigate = useNavigate();
+
+    function navigateToSearch(e) {
+        e.preventDefault();
+
+        navigate('/search', { state: { searchValue: e.target.searchBarHome.value } });
+    }
+
     return (
         <div className="w-full h-screen text-white flex flex-col items-left justify-center px-8" style={{backgroundImage: `url(${BackgroundImage})`}}>
             <div className="text-5xl font-bold">
@@ -37,7 +46,7 @@ function LandingElement() {
                 </h1>
                 <p className="text-lg font-normal mt-2">Get expert tech help now.</p>
             </div>
-            <div className="flex items-center text-black">
+            <form onSubmit={navigateToSearch} className="flex items-center text-black">
                 <input
                     className="mt-4 rounded-l-xl pl-2 py-1 h-12 w-96 border-black border-2 border-r-0"
                     placeholder="What service do you need?"
@@ -51,7 +60,7 @@ function LandingElement() {
                 <button type='submit' className="h-12 w-32 mt-4 ml-5 rounded-xl px-3 py-1 bg-white border-black border-2">
                     Search
                 </button>
-            </div>
+            </form>
         </div>
     )
 }
