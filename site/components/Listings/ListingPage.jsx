@@ -7,7 +7,7 @@ import ListingPictureGrid from './ListingPictureGrid'
 import ListingPurchaseForm from './LisitingPurchaseForm'
 import ListingReviewsGrid from './ListingReviewsGrid'
 
-import NavBar from '../SearchPage/Navbar'
+import NavBar from '../Navbar'
 import ListingReviews from './ListingReviewsGrid'
 
 const data = {
@@ -27,7 +27,7 @@ function ListingPage() {
     document.title = ListingData.title;
     return (
         <div className="w-full h-full">
-            <NavBar onTextChange={() =>console.log(null)}/>
+            <NavBar showAccountButtons={false} showSearchBar={true} />
             <div className="flex flex-row items-center justify-between">
                 <ListingPictureGrid imagesArr={ListingData.pictures}/>
                 <ListingPurchaseForm Data={ListingData} loggedIn={isLogggedIn}/>
