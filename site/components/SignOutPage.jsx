@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
-import { clearUserDetails } from '../../src/utils.js'
+import { clearUserDetails } from '../src/utils.js'
 
-function Signout() {
+function SignOutPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -26,3 +26,5 @@ function Signout() {
         </div>
     )
 }
+
+export default SignOutPage;
