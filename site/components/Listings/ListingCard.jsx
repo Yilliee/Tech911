@@ -1,9 +1,9 @@
 import PlusIcon_Light from './assets/plusIcon_LightOnDark.svg'
 import PropTypes from 'prop-types';
 
-function ListingElement({title, thumbnail, price, isFeatured}) {
+function ListingElement({title, thumbnail, price, isFeatured, clickHandler}) {
     return (
-        <div className="inline-block m-10 w-56 border-grey-200 border-2 rounded-2xl hover:shadow-xl">
+        <div className="inline-block m-10 w-56 border-grey-200 border-2 rounded-2xl hover:shadow-xl" onClick={clickHandler}>
             {isFeatured &&
                 <div className="bg-yellow-300 rounded-t-2xl w-full text-center">
                     <h1 className="font-bold text-lg">Featured</h1>
@@ -29,6 +29,10 @@ ListingElement.propTypes = {
     thumbnail: PropTypes.string.isRequired, // Actually a picture
     price: PropTypes.number.isRequired,
     isFeatured: PropTypes.bool.isRequired,
+    clickHandler: PropTypes.func,
+};
+ListingElement.defaultProps = {
+    clickHandler: () => {},
 };
 
 export default ListingElement;
