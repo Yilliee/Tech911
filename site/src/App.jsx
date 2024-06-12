@@ -6,6 +6,7 @@ import Register from '../components/Register/Register'
 import SearchPage from "../components/SearchPage/SearchPage"
 import ListingPage from "../components/Listings/ListingPage";
 import TroubleshootingPage from "../components/Troubleshooting";
+import SignOutPage from "../components/SignOutPage";
 
 import { useEffect } from "react";
 import { clearUserDetails } from "./utils";
@@ -18,6 +19,7 @@ function App() {
         {path: "/search", element: <SearchPage/>},
         {path: "/viewListing", element: <ListingPage />},
         {path: '/troubleshooting', element: <TroubleshootingPage />},
+        {path: "/signout", element: <SignOutPage />},
     ])
 
     return (
