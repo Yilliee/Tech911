@@ -5,6 +5,7 @@ import Login from '../components/Login/Login'
 import Register from '../components/Register/Register'
 import SearchPage from "../components/SearchPage/SearchPage"
 import ListingPage from "../components/Listings/ListingPage";
+import TroubleshootingPage from "../components/Troubleshooting";
 
 import { useEffect } from "react";
 import { clearUserDetails } from "./utils";
@@ -16,6 +17,7 @@ function App() {
         {path: "/register", element: <Register />},
         {path: "/search", element: <SearchPage/>},
         {path: "/viewListing", element: <ListingPage />},
+        {path: '/troubleshooting', element: <TroubleshootingPage />},
     ])
 
     return (
