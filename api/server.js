@@ -247,6 +247,16 @@ app.get('/applyForVerification', authenticateUser,
     }
 );
 
+app.post('/getListingDetails',
+    async (req, res) => {
+        const { listingID } = req.body;
+
+        const listings = await serverUtils.getListingsDetails(config, listingID);
+
+        res.json(listings);
+    }
+);
+
 app.listen(api_port,
     () => console.log('Server is running on port 3000')
 );

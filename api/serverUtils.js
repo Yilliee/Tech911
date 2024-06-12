@@ -348,6 +348,43 @@ async function updateVerificationRequestStatus(config, userID, status) {
     }
 }
 
+async function getListingsDetails(config, listingID) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        const listingDetails = await conn.query(
+            `SELECT
+             SL.id, SL.thumbnail_id, SL.service_title AS title,
+             SL.service_description AS description, SCU.display_name AS owner_title,
+             SC.verification_status AS owner_verification_status, price
+            FROM
+                ServiceListing AS SL
+            JOIN User AS SCU on SL.owned_by = SCU.id
+            JOIN ServiceCenter AS SC ON SL.owned_by = SC.user_id
+            WHERE SL.id = ?`,
+            [listingID]
+        );
+        if ( ! listingDetails ) return null;
+
+        const picturesList = await conn.query(
+            `SELECT picture_id, picture
+             FROM ServiceListingPictures
+             WHERE listing_id = ?`,
+    [listingID]
+        );
+
+        return {
+            ...listingDetails[0],
+            pictures: picturesList
+        };
+    } catch (err) {
+        console.error('Error getting Listing Details: ', err);
+        return null;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
 module.exports = {
     addUser,
     verifyEmail,
@@ -363,4 +400,5 @@ module.exports = {
     getExtraUserDetails,
     getVerificationStatus,
     updateVerificationRequestStatus,
+    getListingsDetails,
 };
