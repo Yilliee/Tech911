@@ -3,7 +3,7 @@ import SearchIcon from './assets/search_icon.jpg'
 
 import LandingPageHeading from './LandingPageHeading'
 
-import Navbar from './Navbar'
+import Navbar from '../Navbar'
 import ServiceTypeList from './ServiceTypeList'
 import FeaturedListingGrid from '../Listings/FeaturedListingGrid'
 import TopReviewsGrid from '../Reviews/TopReviewsGrid'
@@ -13,7 +13,7 @@ import Listings from '../Listings/Data/ListsData'
 function LandingPage() {   
     return (
         <div>
-            <Navbar />
+            <Navbar showAccountButtons={true} showSearchBar={false} />
             <LandingElement />
             <ServiceTypes />
             <FeaturedListings />
@@ -43,12 +43,13 @@ function LandingElement() {
                     className="mt-4 rounded-l-xl pl-2 py-1 h-12 w-96 border-black border-2 border-r-0"
                     placeholder="What service do you need?"
                     type="search"
+                    id='searchBarHome'
                 />
                 <img
                     className="mt-4 h-12 rounded-r-xl border-black border-2 border-l-0"
                     src={SearchIcon}
                 />
-                <button className="h-12 w-32 mt-4 ml-5 rounded-xl px-3 py-1 bg-white border-black border-2">
+                <button type='submit' className="h-12 w-32 mt-4 ml-5 rounded-xl px-3 py-1 bg-white border-black border-2">
                     Search
                 </button>
             </div>
