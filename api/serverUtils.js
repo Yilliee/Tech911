@@ -2,6 +2,31 @@ const mariadb = require('mariadb');
 const bcryptjs = require('bcryptjs');
 
 
+async function addUser(config, accountType, username, displayname, email, password, phone_no, profilePic = null, address = null, bio = null) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        const hashedPassword = await hashPassword(password);
+        if ( ! hashedPassword)
+            return false;
+
+        await conn.query(
+            "CALL AddUser(?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [username, displayname, email, hashedPassword, phone_no, profilePic, address, bio, accountType]
+        );
+
+        console.log('User added successfully!');
+
+        return true;
+
+    } catch (err) {
+        console.error('Error adding user:', err);
+        return false;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
 async function verifyEmail(config, email, accountType) {
     let conn;
     try {
@@ -65,7 +90,28 @@ async function getUserDetails(config, email, password) {
     }
 }
 
+function hashPassword(password) {
+    const saltRounds = 10;
+
+    return new Promise((resolve, reject) => {
+        bcryptjs.genSalt(saltRounds, (err, salt) => {
+            if (err) {
+                reject(err);
+            } else {
+                bcryptjs.hash(password, salt, (err, hash) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(hash);
+                    }
+                });
+            }
+        });
+    });
+}
+
 module.exports = {
+    addUser,
     verifyEmail,
     getUserDetails,
 };

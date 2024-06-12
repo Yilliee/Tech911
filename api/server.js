@@ -104,6 +104,20 @@ app.get('/authenticate', authenticateUser, async (_, res) => {
     res.json({ message: 'Authenticated' });
 });
 
+app.put('/addUser',
+    async (req, res) => {
+        const { username, displayName, address, phone, email, password, accountType } = req.body;
+
+        const status = await serverUtils.addUser(config, accountType, username, displayName, email, password, phone, null, address, null);
+
+        if (status) {
+            res.json({ message: 'Adding user successful' });
+        } else {
+            res.status(500).json({ message: 'Adding user unsuccessful' });
+        }
+    }
+);
+
 app.listen(api_port,
     () => console.log('Server is running on port 3000')
 );
