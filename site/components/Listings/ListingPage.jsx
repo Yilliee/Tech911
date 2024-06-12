@@ -1,6 +1,7 @@
 import ListingPictureGrid from './ListingPictureGrid'
-import ListingPurchaseForm from './ListingPurchaseForm'
+import ListingPurchaseForm from './LisitingPurchaseForm'
 import ListingReviewsGrid from './ListingReviewsGrid'
+import CreateReview from '../Reviews/CreateReview'
 
 import NavBar from '../Navbar'
 import { useEffect, useState } from 'react'
@@ -95,6 +96,7 @@ function ListingPage() {
                     <ListingPurchaseForm listing={listingDetail}/>
                 </div>
                 {reviews.length > 0 && <ListingReviewsGrid reviews={reviews} />}
+                <CreateReview listing_id={listingID} />
             </div>
         </div>
     );
