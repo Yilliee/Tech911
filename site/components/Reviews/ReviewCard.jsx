@@ -1,7 +1,6 @@
 import { PropTypes } from 'prop-types'
 
-import filledStar from './assets/filledStar.png'
-import emptyStar from './assets/emptyStar.png'
+import RatingStars from './RatingStars'
 
 function ReviewCard({thumbnail, rating, description}) {
     return (
@@ -18,23 +17,6 @@ ReviewCard.propTypes = {
     thumbnail: PropTypes.string.isRequired, // Actually a picture
     rating: PropTypes.number.isRequired,
     description: PropTypes.string.isRequired,
-};
-
-function RatingStars({rating}) {
-    const stars = Array.from({ length: 5 }).map((_, index) => (
-            (index < rating) ? 
-                <img key={index} src={filledStar} className="w-10 h-10" />
-                : <img key={index} src={emptyStar} className="w-10 h-10" />
-        )
-    );
-    return (
-        <div className="flex flex-row items-center justify-center">
-            {stars}
-        </div>
-    );
-}
-RatingStars.propTypes = {
-    rating: PropTypes.number.isRequired,
 };
 
 export default ReviewCard;
