@@ -297,6 +297,24 @@ app.post('/addReview', authenticateUser,
     }
 );
 
+app.post('/createListing', authenticateUser,
+    async (req, res) => {
+        const userID = req.session.userID;
+        const { title, description, price, serviceTypeId, deviceTypeId,
+                isPremium, thumbnail, additionalPictures } = req.body;
+
+        const status = await serverUtils.createNewListing(config, userID, title,
+            description, price, serviceTypeId, deviceTypeId, isPremium, thumbnail,
+            additionalPictures);
+
+        if (status) {
+            res.json({ message: 'Listing created successfully' });
+        } else {
+            res.status(500).json({ message: 'Listing creation failed' });
+        }
+    }
+);
+
 app.listen(api_port,
     () => console.log('Server is running on port 3000')
 );

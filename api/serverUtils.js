@@ -447,6 +447,40 @@ async function addReview(config, order_id, rating, description, service_listing_
 
 }
 
+async function createNewListing(config, userID, title, description, price,
+    serviceTypeId, deviceTypeId, isPremium, thumbnail, additionalPictures) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+
+        await conn.query(`START TRANSACTION`);
+
+        await conn.query(
+            `CALL CreateNewListing(?, ?, ?, ?, ?, ?, ?, ?, @listing_id)`,
+            [userID, title, description, price, serviceTypeId, deviceTypeId, isPremium,
+            Buffer.from(thumbnail.slice(thumbnail.indexOf('base64,') + 7), 'base64')]
+        );
+
+        const [result] = await conn.query('SELECT @listing_id');
+        const listing_id = result['@listing_id'];
+
+        for (const picture of additionalPictures) {
+            await conn.query(
+                 `CALL AddListingPicture(?, ?)`,
+                 [listing_id, Buffer.from(picture.slice(picture.indexOf('base64,') + 7), 'base64')]
+            );
+        }
+
+        await conn.query(`COMMIT`);
+
+        return true;
+    } catch (err) {
+        console.error('Error creating new listing: ', err);
+        return false;
+    } finally {
+        if (conn) conn.end();
+    }
+};
 
 module.exports = {
     addUser,
@@ -467,4 +501,5 @@ module.exports = {
     makePurchase,
     getOrderToBeReviewed,
     addReview,
+    createNewListing,
 };
