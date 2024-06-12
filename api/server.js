@@ -272,6 +272,31 @@ app.post('/makePurchase', authenticateUser,
     }
 );
 
+app.post('/getOrderToBeReviewed', authenticateUser,
+    async (req, res) => {
+        const { listing_id } = req.body;
+        const userID = req.session.userID;
+
+        const orderDetails = await serverUtils.getOrderToBeReviewed(config, listing_id, userID);
+
+        res.json(orderDetails);
+    }
+);
+
+app.post('/addReview', authenticateUser,
+    async (req, res) => {
+        const { order_id, rating, description, service_listing_id, reservation_time, thumbnail } = req.body;
+
+        const status = await serverUtils.addReview(config, order_id, rating, description, service_listing_id, reservation_time, thumbnail);
+
+        if (status) {
+            res.json({ message: 'Review added successfully' });
+        } else {
+            res.status(500).json({ message: 'Review addition failed' });
+        }
+    }
+);
+
 app.listen(api_port,
     () => console.log('Server is running on port 3000')
 );

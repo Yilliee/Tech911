@@ -404,6 +404,50 @@ async function makePurchase(config, userID, listing_id, reservation_time, quanti
     }
 }
 
+async function getOrderToBeReviewed(config, listing_id, user_id) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        const results = await conn.query(
+            `Select OD.order_id, OD.reservation_time, OD.service_listing_id
+             FROM \`Order\` AS Ord
+             JOIN OrderDetails AS OD ON Ord.id = OD.order_id
+             WHERE OD.service_listing_id = ? AND Ord.user_id = ?
+                   AND Ord.id NOT IN (Select order_id FROM Review)
+            ORDER BY OD.reservation_time ASC LIMIT 1;
+            `,
+            [listing_id, user_id]
+        );
+
+        return (results.length > 0) ? results[0] : null;
+    } catch (err) {
+        console.error('Error getting orders: ', err);
+        return null;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
+async function addReview(config, order_id, rating, description, service_listing_id, reservation_time, thumbnail) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        await conn.query(
+            `CALL AddReview(?, ?, ?, ?, ?, ?)`,
+            [order_id, rating, description, service_listing_id, reservation_time, thumbnail ? Buffer.from(thumbnail, 'base64') : null]
+        );
+
+        return true;
+    } catch (err) {
+        console.error('Error adding review: ', err);
+        return false;
+    } finally {
+        if (conn) conn.end();
+    }
+
+}
+
+
 module.exports = {
     addUser,
     verifyEmail,
@@ -421,4 +465,6 @@ module.exports = {
     updateVerificationRequestStatus,
     getListingsDetails,
     makePurchase,
+    getOrderToBeReviewed,
+    addReview,
 };
