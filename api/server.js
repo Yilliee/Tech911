@@ -118,6 +118,46 @@ app.put('/addUser',
     }
 );
 
+app.post('/getListings',
+    async (req, res) => {
+        const { featured_only, count } = req.body;
+
+        const listings = await serverUtils.getListings(config, featured_only, count);
+
+        res.json(listings)
+    }
+);
+
+app.post('/getReviews',
+    async (req, res) => {
+        const { count, listing_id } = req.body;
+
+        const top_reviews = await serverUtils.getReviews(config, listing_id, count);
+
+        res.json(top_reviews)
+    }
+);
+
+app.get('/getServiceTypes',
+    async (_, res) => {
+        const services_list = await serverUtils.getServiceTypes(config);
+
+        res.json({
+            service_type_list: services_list
+        });
+    }
+);
+
+app.get('/getDeviceTypes',
+    async (_, res) => {
+        const devices_list = await serverUtils.getDeviceTypes(config);
+
+        res.json({
+            device_type_list: devices_list
+        });
+    }
+);
+
 app.listen(api_port,
     () => console.log('Server is running on port 3000')
 );

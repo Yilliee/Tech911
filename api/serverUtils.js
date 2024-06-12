@@ -110,8 +110,100 @@ function hashPassword(password) {
     });
 }
 
+async function getListings(config, featured_only, count) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        const results = await conn.query(
+            `SELECT
+             SL.id, SLP.picture AS thumbnail, SL.service_title AS title,
+             SL.price, ST.type AS serviceType, DT.type AS deviceType,
+             SL.is_premium AS isFeatured
+             FROM
+             (Select * FROM ServiceListing
+                ${featured_only ? 'WHERE is_premium = True' : ''}
+                ${count ? 'LIMIT ?' : ''}) AS SL
+             JOIN ServiceListingPictures AS SLP ON SL.thumbnail_id = SLP.picture_id
+             JOIN ServiceType AS ST ON ST.id = SL.service_type_id
+             JOIN DeviceType AS DT ON DT.id = SL.device_type_id`,
+             count
+        );
+
+        return results;
+    } catch (err) {
+        console.error('Error getting pictures: ', err);
+        return null;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
+async function getReviews(config, listing_id, count = 10) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        const results = await conn.query(
+            `SELECT R.id, U.display_name AS 'name', R.rating, RP.picture AS thumbnail, R.description
+             FROM (Select id, rating, description, thumbnail_id, order_id
+                    FROM Review LIMIT ?) AS R
+             LEFT JOIN ReviewPictures AS RP ON R.thumbnail_id = RP.picture_id
+             JOIN \`Order\` AS Ord ON R.order_id = Ord.id
+             JOIN OrderDetails AS OD ON Ord.id = OD.order_id
+             JOIN User AS U ON Ord.user_id = U.id
+             ${listing_id ? 'WHERE OD.service_listing_id = ?' : ''}
+            `,
+            [count, listing_id]
+        );
+
+        return results;
+    } catch (err) {
+        console.error('Error getting reviews: ', err);
+        return null;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
+async function getServiceTypes(config) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        const results = await conn.query(
+            `SELECT * FROM ServiceType`
+        );
+
+        return results;
+    } catch (err) {
+        console.error('Error getting service types: ', err);
+        return null;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
+async function getDeviceTypes(config) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        const results = await conn.query(
+            `SELECT * FROM DeviceType`
+        );
+
+        return results;
+    } catch (err) {
+        console.error('Error getting service types: ', err);
+        return null;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
 module.exports = {
     addUser,
     verifyEmail,
     getUserDetails,
+    getListings,
+    getReviews,
+    getServiceTypes,
+    getDeviceTypes,
 };
