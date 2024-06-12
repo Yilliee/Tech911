@@ -8,6 +8,7 @@ import ProfileEdit from "../components/ProfileEdit/ProfileEdit";
 import ListingPage from "../components/Listings/ListingPage";
 import TroubleshootingPage from "../components/Troubleshooting";
 import SignOutPage from "../components/SignOutPage";
+import CreateNewListing from "../components/Listings/CreateNewListing";
 
 function App() {
     const Routes=createBrowserRouter([
@@ -19,6 +20,7 @@ function App() {
         {path: "/viewListing", element: <ListingPage />},
         {path: '/troubleshooting', element: <TroubleshootingPage />},
         {path: "/signout", element: <SignOutPage />},
+        {path: '/createListing', element: <CreateNewListing />},
     ])
 
     return (
@@ -26,6 +28,6 @@ function App() {
             <LandingPage/>
         </RouterProvider>
     );
-};
+}
 
 export default App;
