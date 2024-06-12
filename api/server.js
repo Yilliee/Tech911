@@ -118,6 +118,11 @@ app.put('/addUser',
     }
 );
 
+app.put('/logout', (req, res) => {
+    req.session.destroy();
+    res.json({ message: 'Logout successful' });
+});
+
 app.post('/getListings',
     async (req, res) => {
         const { featured_only, count } = req.body;
@@ -155,6 +160,90 @@ app.get('/getDeviceTypes',
         res.json({
             device_type_list: devices_list
         });
+    }
+);
+
+app.put('/updateUserDetails', authenticateUser,
+    async (req, res) => {
+        const userID = req.session.userID;
+        const { display_name, address, phone_no, bio, profile_pic_base64 } = req.body;
+        
+        const status = await serverUtils.updateUserDetails(config, userID, display_name, address, phone_no, bio, profile_pic_base64);
+
+        if (status) {
+            res.json({ message: 'Update successful' });
+        } else {
+            res.status(500).json({ message: 'Update unsuccessful' });
+        }
+    }
+);
+
+app.get('/getSelectedServicePackage', authenticateUser,
+    async (req, res) => {
+        const userID = req.session.userID;
+
+        const selectedPackage = await serverUtils.getSelectedServicePackage(config, userID);
+
+        res.json(selectedPackage);
+    }
+);
+
+app.get('/getServicePackagesList',
+    async (_, res) => {
+        const servicePackages = await serverUtils.getServicePackagesList(config);
+
+        res.json({
+            packages: servicePackages
+        });
+    }
+);
+
+app.put('/updateServicePackage', authenticateUser,
+    async (req, res) => {
+        const userID = req.session.userID;
+        const { new_package } = req.body;
+
+        const status = await serverUtils.updateServicePackage(config, userID, new_package);
+
+        if (status) {
+            res.json({ message: 'Update successful' });
+        } else {
+            res.status(500).json({ message: 'Update unsuccessful' });
+        }
+    }
+);
+
+app.get('/getUserDetails', authenticateUser,
+    async (req, res) => {
+        const userID = req.session.userID;
+
+        const userDetails = await serverUtils.getExtraUserDetails(config, userID);
+
+        res.json(userDetails);
+    }
+);
+
+app.get('/getVerificationStatus', authenticateUser,
+    async (req, res) => {
+        const userID = req.session.userID;
+
+        const verificationStatus = await serverUtils.getVerificationStatus(config, userID);
+
+        res.json({ status: verificationStatus });
+    }
+);
+
+app.get('/applyForVerification', authenticateUser,
+    async (req, res) => {
+        const userID = req.session.userID;
+
+        const status = await serverUtils.updateVerificationRequestStatus(config, userID, 'Processing');
+
+        if (status) {
+            res.json({ message: 'Verification request sent' });
+        } else {
+            res.status(500).json({ message: 'Verification request failed' });
+        }
     }
 );
 

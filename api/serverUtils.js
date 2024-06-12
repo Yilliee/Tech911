@@ -198,6 +198,156 @@ async function getDeviceTypes(config) {
     }
 }
 
+async function updateUserDetails(config, userID, display_name, address, phone_no, bio, profile_pic_base64) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+
+        const updatedList =
+            (display_name ? `display_name = "${display_name}", ` : '') +
+            (address ? `address = "${address}", ` : '') +
+            (phone_no ? `phone_no = "${phone_no}", ` : '') +
+            (bio ? `bio = "${bio}", ` : '')
+        ;
+
+        if ( updatedList.length > 0 ) {
+            await conn.query(
+                `UPDATE User
+                SET ${updatedList.slice(0, updatedList.length - 2)}
+                WHERE id = ${userID}`
+            );
+        }
+
+        if ( profile_pic_base64 ) {
+            await conn.query(
+                `CALL UpdateProfilePicture(?, ?)`,
+                [Buffer.from(profile_pic_base64, 'base64'), userID]
+            );
+        }
+
+        return true;
+    } catch (err) {
+        console.error('Error updating user details: ', err);
+        return false;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
+async function getSelectedServicePackage(config, userID) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        const results = await conn.query(
+            `SELECT service_package_id FROM Customer WHERE user_id = ?`,
+            [userID]
+        );
+
+        return results[0];
+    } catch (err) {
+        console.error('Error getting selected service package: ', err);
+        return null;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
+async function getServicePackagesList(config) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        const results = await conn.query(
+            `SELECT id, package_name, description, chat_support, call_support
+             FROM ServicePackage`
+        );
+
+        return results;
+    } catch (err) {
+        console.error('Error getting service packages: ', err);
+        return null;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
+async function updateServicePackage(config, userID, new_package) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        await conn.query(
+            `UPDATE Customer
+             SET service_package_id = ?
+             WHERE user_id = ?`,
+            [new_package, userID]
+        );
+
+        return true;
+    } catch (err) {
+        console.error('Error updating service package: ', err);
+        return false;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
+async function getExtraUserDetails(config, userID) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        const results = await conn.query(
+            `SELECT address, phone_no, bio FROM User WHERE id = ?`,
+            [userID]
+        );
+
+        return results[0];
+    } catch (err) {
+        console.error('Error getting extra user details: ', err);
+        return null;
+    } finally {
+        if (conn) conn.end();
+    }
+};
+
+async function getVerificationStatus(config, userID) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        const results = await conn.query(
+            `SELECT verification_status
+             FROM ServiceCenter
+             WHERE user_id = ?`,
+             [userID]
+        );
+
+        return results[0];
+    } catch (err) {
+        console.error('Error getting verification status: ', err);
+        return null;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
+async function updateVerificationRequestStatus(config, userID, status) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        await conn.query(
+            `UPDATE ServiceCenter
+             SET verification_status = ?
+             WHERE user_id = ?`,
+            [status, userID]
+        );
+
+        return true;
+    } catch (err) {
+        console.error('Error updating verification request status: ', err);
+        return false;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
 module.exports = {
     addUser,
     verifyEmail,
@@ -206,4 +356,11 @@ module.exports = {
     getReviews,
     getServiceTypes,
     getDeviceTypes,
+    updateUserDetails,
+    getSelectedServicePackage,
+    getServicePackagesList,
+    updateServicePackage,
+    getExtraUserDetails,
+    getVerificationStatus,
+    updateVerificationRequestStatus,
 };
