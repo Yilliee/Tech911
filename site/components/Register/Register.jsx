@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, } from 'react'; 
 import { useNavigate } from 'react-router-dom';
 import FormElementsList from './FormElementsList';
 import UserRequiredDetails from './Data/UserRequiredDetails.js';
@@ -18,8 +18,40 @@ function RegisterCard() {
     function formSubmitHandler(e) {
         e.preventDefault();
 
-        // Store user details according to accountType
-        // Redirect to main page
+        const username = e.target.username.value;
+        const displayName = e.target['display name'].value;
+        const address = (e.target.address.value !== '') ?
+                            e.target.address.value : null;
+        const phone = e.target['phone number'].value;
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+
+        fetch('http://localhost:3000/addUser', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username,
+                displayName,
+                address,
+                phone,
+                email,
+                password,
+                accountType,
+            })
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    alert('User added successfully! Account Type : ' + accountType);
+                    navigate(-1);
+                } else {
+                   alert('Error! User not added. Error code : ' + response.status);
+                }
+            })
+            .catch(error => {
+                console.log(error)
+            });
     }
   
     return (
