@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Navbar from '../Navbar.jsx';
+import Navbar from '../Navbar';
 import PaymentRequests from './PaymentRequestsCard';
 import VerificationMarkRequests from './VerificationMarkRequestsCard';
 import { getPictureURLFromBase64 } from '../../src/utils.js';
