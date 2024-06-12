@@ -4,12 +4,10 @@ import LandingPage from "../components/LandingPage/LandingPage";
 import Login from '../components/Login/Login'
 import Register from '../components/Register/Register'
 import SearchPage from "../components/SearchPage/SearchPage"
+import ProfileEdit from "../components/ProfileEdit/ProfileEdit";
 import ListingPage from "../components/Listings/ListingPage";
 import TroubleshootingPage from "../components/Troubleshooting";
 import SignOutPage from "../components/SignOutPage";
-
-import { useEffect } from "react";
-import { clearUserDetails } from "./utils";
 
 function App() {
     const Routes=createBrowserRouter([
@@ -17,6 +15,7 @@ function App() {
         {path: "/signin", element: <Login/>},
         {path: "/register", element: <Register />},
         {path: "/search", element: <SearchPage/>},
+        {path: "/profile", element: <ProfileEdit />},
         {path: "/viewListing", element: <ListingPage />},
         {path: '/troubleshooting', element: <TroubleshootingPage />},
         {path: "/signout", element: <SignOutPage />},
