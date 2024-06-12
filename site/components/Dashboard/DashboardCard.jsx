@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import DashboardCardHeading from './DashboardCardHeading';
 import DashboardCardEntry from './DashboardCardEntry';
 
-function DashboardCard({TitleSize, TableHeading, TableEntries, MaxEntriesPerPage}) {
+function DashboardCard({TitleSize, Table, MaxEntriesPerPage}) {
     const [currentPage, setCurrentPage] = useState(0);
-    const PageCount = Math.ceil(TableEntries.length / MaxEntriesPerPage);
+    const PageCount = Math.ceil(Table.length / MaxEntriesPerPage);
     
     function handlePageChange(pageNo) {
         setCurrentPage(pageNo);
@@ -22,11 +22,11 @@ function DashboardCard({TitleSize, TableHeading, TableEntries, MaxEntriesPerPage
         );
     });
     return (
-        <div className="flex-inline flex-col justify-start mt-4 bg-sky-100 text-black border-black border-2 rounded-3xl w-full">
-            <DashboardCardHeading TitleSize={TitleSize} Headings={TableHeading} />
-            {TableEntries.slice(currentPage*MaxEntriesPerPage, (currentPage + 1)*MaxEntriesPerPage).map(
+        <div className="flex-inline  overflow-hidden flex-col justify-start mt-4 bg-sky-100 text-black border-black border-2 rounded-3xl w-full">
+            <DashboardCardHeading TitleSize={TitleSize} Headings={Object.keys(Table[0])} />
+            {Table.slice(currentPage*MaxEntriesPerPage, (currentPage + 1)*MaxEntriesPerPage).map(
                     (entry, idx) => {
-                        return <DashboardCardEntry TitleSize={TitleSize} key={idx} EntryContent={entry}/>;
+                        return <DashboardCardEntry TitleSize={TitleSize} key={idx} EntryContent={Object.values(entry)} bottomBorder={idx != Table.length - 1}/>;
                     }
             )}
             {PageCount > 1 &&
@@ -38,9 +38,8 @@ function DashboardCard({TitleSize, TableHeading, TableEntries, MaxEntriesPerPage
     );
 }
 DashboardCard.propTypes = {
+    Table: PropTypes.array.isRequired,
     TitleSize: PropTypes.string,
-    TableHeading: PropTypes.arrayOf(PropTypes.string).isRequired,
-    TableEntries: PropTypes.array.isRequired,
     MaxEntriesPerPage: PropTypes.number.isRequired,
 };
 DashboardCard.defaultProps = {

@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function DashboardCardEntry({TitleSize, EntryContent}) {
-    const basicClass = "flex flex-col truncate justify-center px-4 h-full text-center items-center font-bold text-normal border-black";
+function DashboardCardEntry({TitleSize, EntryContent, bottomBorder}) {
+    const basicClass = "truncate justify-center px-4 h-full text-center items-center font-bold text-normal border-black";
 
     const elements = EntryContent.map((content, idx) => {
-        const classProp = `${typeof content === 'object' && content.props.className} ${idx === 1 ? TitleSize : 'w-1/6'} ${basicClass} ${(idx + 1 < EntryContent.length) && 'border-r-2'}`;
+        const classProp = `${typeof content === 'object' ? content.props.className : 'flex flex-col'} ${idx === 1 ? TitleSize : 'w-1/6'} ${basicClass} ${(idx + 1 < EntryContent.length) && 'border-r-2'}`;
 
         return (
             (typeof content === 'object') ?
@@ -15,7 +15,7 @@ function DashboardCardEntry({TitleSize, EntryContent}) {
     });
 
     return (
-        <div className="flex flex-row justify-center h-12 items-center border-b-2 border-black">
+        <div className={`flex flex-row justify-center h-12 items-center ${bottomBorder && 'border-b-2'} border-black`}>
            {elements}
         </div>
     )
@@ -23,6 +23,11 @@ function DashboardCardEntry({TitleSize, EntryContent}) {
 DashboardCardEntry.propTypes = {
     TitleSize: PropTypes.string.isRequired,
     EntryContent: PropTypes.array.isRequired,
+    bottomBorder: PropTypes.bool,
+};
+
+DashboardCardEntry.defaultProps = {
+    bottomBorder: true,
 };
 
 
