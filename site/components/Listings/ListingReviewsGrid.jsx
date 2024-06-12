@@ -30,9 +30,11 @@ function ListingReviews({reviews}) {
         <div className='flex flex-col'>
             <h1 className='text-4xl font-bold mt-12 ml-12'>Reviews</h1>
             <ReviewsGrid reviews={reviews.slice(currentPage * ReviewsPerPage, (currentPage + 1) * ReviewsPerPage)} cols={ReviewsGridCols} />
-            <div className='flex flex-row justify-center'>
-                {pageChangeButtons}
-            </div>
+            {reviews.length > ReviewsPerPage && 
+                <div className='flex flex-row justify-center'>
+                    {pageChangeButtons}
+                </div>
+            }
         </div>
     );
 }
