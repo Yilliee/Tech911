@@ -25,8 +25,8 @@ function FormElementsList({requiredList, setAccountType, formSubmitHandler}) {
             <div className='flex flex-col items-center justify-start'>
                 <h1 className='mt-8 px-4 text-2xl font-bold'>Create Account</h1>
                 <div className='flex flex-row justify-around'>
-                    <FormButton clickHandler={() => setAccountType('customer')} text='Customer' />
-                    <FormButton clickHandler={() => setAccountType('serviceCenter')} text='Service Center' />
+                    <FormButton clickHandler={() => setAccountType('Customer')} text='Customer' />
+                    <FormButton clickHandler={() => setAccountType('ServiceCenter')} text='Service Center' />
                 </div>
             </div>
         </form>

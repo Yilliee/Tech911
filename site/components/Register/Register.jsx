@@ -1,5 +1,7 @@
-import { useState } from 'react'; 
-import UserFormElementsList from './UserFormElementsList';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import FormElementsList from './FormElementsList';
+import UserRequiredDetails from './Data/UserRequiredDetails.js';
 
 function Register() {
     return (
@@ -11,6 +13,7 @@ function Register() {
 
 function RegisterCard() {
     const [accountType, setAccountType] = useState('user');
+    const navigate = useNavigate();
 
     function formSubmitHandler(e) {
         e.preventDefault();
@@ -23,7 +26,8 @@ function RegisterCard() {
         <div className="p-8 flex flex-col items-center rounded-3xl justify-start bg-white">
                 <h1 className="font-bold text-4xl min-h-12">Register</h1>
                 <div className="py-4 flex flex-col w-1/2 items-center min-w-96 min-h-96 bg-white rounded-3xl">
-                    <UserFormElementsList
+                   <FormElementsList
+                        requiredList={UserRequiredDetails}
                         setAccountType={setAccountType}
                         formSubmitHandler={formSubmitHandler}
                     />

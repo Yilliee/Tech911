@@ -10,7 +10,6 @@ function Login() {
     const [email, setEmail] = useState(null);
     
     const navigate = useNavigate();
-    // const { setUserDetails, profilePicBase64 } = useContext(UserContext);
 
     function verifyEmail() {
         const emailElem = document.getElementById('email');
