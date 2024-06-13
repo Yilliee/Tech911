@@ -13,13 +13,10 @@ const config = {
     database: process.env.DBName
 };
 
-// Website link for CORS 
+// Website link for CORS
 const website_link = process.env.WebsiteHost;
-// API port
 const api_port = process.env.APIPort;
 
-console.log(website_link)
-console.log(api_port)
 // create a session management system
 const sessionConfig = {
     secret: crypto.randomBytes(20).toString('hex'),
@@ -167,7 +164,7 @@ app.put('/updateUserDetails', authenticateUser,
     async (req, res) => {
         const userID = req.session.userID;
         const { display_name, address, phone_no, bio, profile_pic_base64 } = req.body;
-        
+
         const status = await serverUtils.updateUserDetails(config, userID, display_name, address, phone_no, bio, profile_pic_base64);
 
         if (status) {
@@ -293,6 +290,107 @@ app.post('/addReview', authenticateUser,
             res.json({ message: 'Review added successfully' });
         } else {
             res.status(500).json({ message: 'Review addition failed' });
+        }
+    }
+);
+
+app.get('/getPictures',
+    async (_, res) => {
+        const pictureList = await serverUtils.getPictures(config);
+
+        res.json(pictureList);
+    }
+);
+
+app.post('/getUsersOrders', authenticateUser,
+    async (req, res) => {
+        const userID = req.session.userID;
+
+        orderList = await serverUtils.getOrders(config, userID);
+
+        res.json({ orderList });
+    }
+);
+
+app.get('/getPendingVerificationRequests', authenticateUser,
+    async (_, res) => {
+
+        const pendingRequests = await serverUtils.getPendingVerificationRequests(config);
+
+        res.json({
+            'requests': pendingRequests
+        });
+    }
+);
+
+app.put('/updateVerificationRequests', authenticateUser,
+    async (req, res) => {
+        const { user_id, status } = req.body;
+
+        const updatedStatus = await serverUtils.updateVerificationRequestStatus(config, user_id, status);
+
+        if (updatedStatus) {
+            res.json({ message: 'Update successful' });
+        } else {
+            res.status(500).json({ message: 'Update unsuccessful' });
+        }
+    }
+);
+
+app.get('/getPendingPaymentRequests', authenticateUser,
+    async (_, res) => {
+
+        const paymentRequests = await serverUtils.getPaymentRequests(config);
+
+        res.json({
+            'requests': paymentRequests
+        });
+    }
+);
+
+app.put('/updatePaymentRequests', authenticateUser,
+    async (req, res) => {
+        const { order_id, status } = req.body;
+
+        const updatedStatus = await serverUtils.updatePaymentRequestStatus(config, order_id, status);
+
+        if (updatedStatus) {
+            res.json({ message: 'Update successful' });
+        } else {
+            res.status(500).json({ message: 'Update unsuccessful' });
+        }
+    }
+);
+
+
+app.get('/getServiceCenterOrders', authenticateUser,
+    async (req, res) => {
+        const userID = req.session.userID;
+
+        const serviceCenterOrders = await serverUtils.getServiceCenterOrders(config, userID);
+
+        res.json(serviceCenterOrders);
+    }
+);
+
+app.get('/getOrderStatusList', authenticateUser,
+    async (_, res) => {
+        const orderStatusList = await serverUtils.getOrderStatusList(config);
+
+        res.json({ status_list: orderStatusList });
+    }
+);
+
+app.put('/updateOrderStatus', authenticateUser,
+    async (req, res) => {
+        const { order_id, status_id } = req.body;
+
+        const updatedStatus = await serverUtils.updateOrderStatus(config, order_id, status_id);
+
+        if (updatedStatus) {
+            res.json({ message: 'Update successful' });
+        } else {
+            res.status(500).json({ message: 'Update unsuccessful' });
         }
     }
 );

@@ -482,6 +482,220 @@ async function createNewListing(config, userID, title, description, price,
     }
 };
 
+async function getPictures(config) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        const results = await conn.query("SELECT * FROM ServiceListingPictures");
+        return results;
+    } catch (err) {
+        console.error('Error getting pictures: ', err);
+        return null;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
+async function getOrders(config, userID) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+
+        const results = await conn.query(
+            `SELECT O.id, SL.service_title, ST.type AS service_type, O.order_timestamp,
+             SC.display_name AS service_center_name, OS.name AS status, OD.reservation_time,
+             OD.quantity, ORec.total_cost, R.id AS review_id
+            FROM
+            (Select id, order_timestamp FROM \`Order\` WHERE user_id = ?) AS O
+            JOIN OrderReceipt AS ORec ON O.id = ORec.order_id
+            JOIN OrderDetails AS OD ON O.id = OD.order_id
+            JOIN OrderStatus AS OS ON OD.order_status_id = OS.id
+            JOIN ServiceListing AS SL ON OD.service_listing_id = SL.id
+            JOIN ServiceType AS ST ON SL.service_type_id = ST.id
+            JOIN User AS SC ON SL.owned_by = SC.id
+            LEFT JOIN Review AS R ON O.id = R.order_id
+            `,
+            [userID]
+        );
+
+        return results;
+    } catch (err) {
+        console.error('Error getting orders: ', err);
+        return null;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
+async function getTopReviews(config, count = 10) {
+    let conn;serverUtils
+    try {
+        conn = await mariadb.createConnection(config);
+        const results = await conn.query(
+            `SELECT R.id, U.display_name AS 'name', R.rating, RP.picture AS thumbnail, R.description
+             FROM (Select id, rating, description, thumbnail_id, order_id
+                    FROM Review ORDER BY rating DESC LIMIT ?) AS R
+             LEFT JOIN ReviewPictures AS RP ON R.thumbnail_id = RP.picture_id
+             JOIN \`Order\` AS Ord ON R.order_id = Ord.id
+             JOIN User AS U ON Ord.user_id = U.id
+            `,
+            [count]
+        );
+
+        return results;
+    } catch (err) {
+        console.error('Error getting reviews: ', err);
+        return null;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
+async function getPendingVerificationRequests(config) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        const results = await conn.query(
+            `Select U.id, U.display_name, SC.contact_email, U.phone_no
+             FROM ServiceCenter AS SC
+             JOIN User AS U on U.id = SC.user_id
+             WHERE SC.verification_status = 'Processing'`
+        );
+
+        return results;
+    } catch (err) {
+        console.error('Error getting pending verification requests: ', err);
+        return null;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
+async function getPaymentRequests(config) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        const results = await conn.query(
+            `SELECT ORP.order_id, SL.service_title, ORP.total_cost, PM.type AS payment_method, ORP.payment_proof
+             FROM OrderReceipt AS ORP
+             JOIN OrderDetails AS OD ON ORP.order_id = OD.order_id
+             JOIN ServiceListing AS SL ON OD.service_listing_id = SL.id
+             JOIN PaymentMethod AS PM ON ORP.payment_method_id = PM.id
+             WHERE payment_status = 'Processing'`
+        );
+
+        const paymentProofs = results.map((row) => {
+            return {
+                order_id:   row.order_id,
+                title:      row.service_title,
+                total_cost: row.total_cost,
+                payment_method: row.payment_method,
+                payment_proof:  row.payment_proof.toString('base64')
+            };
+        });
+
+        return paymentProofs;
+    } catch (err) {
+        console.error('Error getting payment requests: ', err);
+        return null;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
+async function updatePaymentRequestStatus(config, orderID, status) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        await conn.query(
+            `UPDATE OrderReceipt
+             SET payment_status = ?
+             WHERE order_id = ?`,
+            [status, orderID]
+        );
+
+        if ( status === 'Processed' ) {
+            await conn.query(
+                `CALL UpdateLoyaltyPoints(?)`,
+                [orderID]
+            );
+        }
+        return true;
+    } catch (err) {
+        console.error('Error updating payment request status: ', err);
+        return false;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
+async function getServiceCenterOrders(config, userID) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        const results = await conn.query(
+            `SELECT O.id AS order_id, SL.service_title AS title, ST.type AS service_type,
+             O.order_timestamp, U.display_name AS owner_name, OS.name AS status,
+             OD.order_status_id AS status_id, OD.reservation_time, OD.quantity,
+             ORec.total_cost
+            FROM \`Order\` AS O
+            JOIN User AS U ON O.user_id = U.id
+            JOIN OrderReceipt AS ORec ON O.id = ORec.order_id
+            JOIN OrderDetails AS OD ON O.id = OD.order_id
+            JOIN OrderStatus AS OS ON OD.order_status_id = OS.id
+            JOIN ServiceListing AS SL ON OD.service_listing_id = SL.id
+            JOIN ServiceType AS ST ON SL.service_type_id = ST.id
+            WHERE SL.owned_by = ?`,
+            [userID]
+        );
+
+        return results;
+    } catch (err) {
+        console.error('Error getting service center orders: ', err);
+        return null;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
+async function getOrderStatusList(config) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        const results = await conn.query(
+            `SELECT * FROM OrderStatus`
+        );
+
+        return results;
+    } catch (err) {
+        console.error('Error getting order status types: ', err);
+        return null;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
+async function updateOrderStatus(config, order_id, status_id) {
+    let conn;
+    try {
+        conn = await mariadb.createConnection(config);
+        await conn.query(
+            `UPDATE OrderDetails
+             SET order_status_id = ?
+             WHERE order_id = ?`,
+            [status_id, order_id]
+        );
+
+        return true;
+    } catch (err) {
+        console.error('Error updating order status: ', err);
+        return false;
+    } finally {
+        if (conn) conn.end();
+    }
+
+}
+
 module.exports = {
     addUser,
     verifyEmail,
@@ -502,4 +716,13 @@ module.exports = {
     getOrderToBeReviewed,
     addReview,
     createNewListing,
+    getPictures,
+    getOrders,
+    getTopReviews,
+    getPendingVerificationRequests,
+    getPaymentRequests,
+    updatePaymentRequestStatus,
+    getServiceCenterOrders,
+    getOrderStatusList,
+    updateOrderStatus,
 };
