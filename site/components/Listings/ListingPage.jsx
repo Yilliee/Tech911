@@ -1,5 +1,5 @@
 import ListingPictureGrid from './ListingPictureGrid'
-import ListingPurchaseForm from './LisitingPurchaseForm'
+import ListingPurchaseForm from './ListingPurchaseForm'
 import ListingReviewsGrid from './ListingReviewsGrid'
 import CreateReview from '../Reviews/CreateReview'
 
